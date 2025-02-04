@@ -1,0 +1,67 @@
+:root {
+    --dark-bg: #1e1e1e;
+    --darker-bg: #252526;
+    --border-color: #3c3c3c;
+    --text-color: #cccccc;
+    --highlight-color: #0e639c;
+    --input-bg: #3c3c3c;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--dark-bg);
+    padding: 20px;
+}
+
+.chat-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--darker-bg);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+}
+
+h1 {
+    color: var(--highlight-color);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-floating {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+.form-control:focus {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    box-shadow: 0 0 0 0.2rem rgba(14, 99, 156, 0.25);
+}
+
+.form-floating label {
+    color: #888;
+}
+
+#askBtn {
+    background-color: var(--highlight-color);
+    color: #ffffff;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+#askBtn:hover {
+    background-color: #1177bb;
+}
+
+#response {
+    background-color: var(--input-bg);
+    border: 1;
+}

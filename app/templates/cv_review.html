@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Review</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #2a2a2a;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h2,
+        h4 {
+            color: #4a9fff;
+            margin-top: 0;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-input-label {
+            background-color: #4a9fff;
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        .file-input-label:hover {
+            background-color: #3a8ae0;
+        }
+
+        button {
+            background-color: #4a9fff;
+            color: #ffffff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #3a8ae0;
+        }
+
+        #fileInputName {
+            margin-left: 10px;
+            font-style: italic;
+        }
+
+        #think,
+        #review {
+            background-color: #3a3a3a;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #uploadingMessage {
+            color: #4a9fff;
+            font-style: italic;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Upload CV for Review</h2>
+        <label for="fileInput" class="file-input-label">Choose File</label>
+        <input type="file" id="fileInput" accept=".pdf">
+        <span id="fileInputName"></span>
+        <button onclick="uploadFile()">Submit</button>
+        <div id="uploadingMessage" class="hidden">Uploading and processing...</div>
+
+        <div id="thinkContainer" class="hidden">
+            <h4>Thought process</h4>
+            <div id="think"></div>
+        </div>
+
+        <div id="reviewContainer" class="hidden">
+            <h4>Result</h4>
+            <div id="review"></div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById("fileInput");
+        const fileInputName = document.getElementById("fileInputName");
+        const uploadingMessage = document.getElementById("uploadingMessage");
+        const thinkContainer = document.getElementById("thinkContainer");
+        const reviewContainer = document.getElementById("reviewContainer");
+
+        fileInput.addEventListener("change", function () {
+            if (this.files && this.files[0]) {
+                fileInputName.textContent = this.files[0].name;
+            } else {
+                fileInputName.textContent = "";
+            }
+        });
+
+        async function uploadFile() {
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please select a file.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            uploadingMessage.classList.remove("hidden");
+            thinkContainer.classList.add("hidden");
+            reviewContainer.classList.add("hidden");
+
+            try {
+                const response = await fetch("/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                document.getElementById("think").innerHTML = data.think_response || "Error processing request.";
+                document.getElementById("review").innerHTML = data.final_response || "Error processing request.";
+
+                thinkContainer.classList.remove("hidden");
+                reviewContainer.classList.remove("hidden");
+            } catch (error) {
+                alert("An error occurred while processing your request.");
+            } finally {
+                uploadingMessage.classList.add("hidden");
+            }
+        }
+    </script>
+</body>
+
+</html>
