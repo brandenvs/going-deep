@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 import fitz  # PyMuPDF
 import requests
@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Ollama API Configuration
-OLLAMA_API_URL = "http://localhost:11434/api/chat"
+OLLAMA_API_URL = "http://localhost:22345/api/chat"
 MODEL_NAME = "deepseek-r1:1.5b"
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -67,6 +67,7 @@ def get_cv_review(cv_text):
     response = requests.post(OLLAMA_API_URL, headers=headers, json=payload)
 
     if response.status_code == 200:
+        print(response)
         data = response.json()
         responses = data.get("message", {}).get("content").split('</think>')
         think_response = responses[0]
