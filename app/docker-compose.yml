@@ -1,12 +1,18 @@
-name: ollama
+name: ai-agents
 
 services:
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
     restart: unless-stopped
+    environment:
+      OLLAMA_HOST: 0.0.0.0
+      NVIDIA_VISIBLE_DEVICES: all
     ports:
-      - "22345:11434"
+      - "11434:11434"
+    runtime: nvidia
+    networks:
+      - app-network
     volumes:
       - ollama_data:/root/.ollama
     entrypoint: [ "/bin/sh", "-c" ]
@@ -14,19 +20,28 @@ services:
       - |
         ollama serve & 
         sleep 2 &&
-        ollama pull deepseek-r1:1.5b &&
         tail -f /dev/null
+      # ollama pull deepseek-r1:1.5b &&
+      # ollama pull deepseek-r1:7b &&
+      # ollama pull deepseek-r1:8b &&
 
   flask-app:
     build: .
     container_name: flask-app
     restart: unless-stopped
     ports:
-      - "5000:5000"
+      - "7001:7000" # This maps the host's 7001 to the container's 7000
     volumes:
       - .:/app
     depends_on:
       - ollama
+    networks:
+      - app-network
 
 volumes:
   ollama_data:
+
+
+networks:
+  app-network:
+    driver: bridge

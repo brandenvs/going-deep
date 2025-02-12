@@ -1,0 +1,5 @@
+Can you tell me how I might build an AI Agent using the Deepseek1.5b model?
+The agent should specialise in reviewing CVs and job applications. Ensuring that the submitted CV matches a set of predefined criteria and standards that are contextually available through the RAG & vector database(pgAI).
+
+---
+Can you tell me how I might improve the accuracy of my local Deepseek chatbot when generating code? I want the model to be able to run, debug, and fix code.

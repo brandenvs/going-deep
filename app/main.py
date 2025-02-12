@@ -11,8 +11,8 @@ app = Flask(__name__)
 CORS(app)
 
 # Ollama API Configuration
-OLLAMA_API_URL = "http://localhost:22345/api/chat"
-MODEL_NAME = "deepseek-r1:1.5b"
+OLLAMA_API_URL = "http://ollama:11434/api/chat"
+MODEL_NAME = "deepseek-r1:7b"
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -114,6 +114,46 @@ def upload_file():
     
     return jsonify({"error": "File upload failed"}), 500
 
+@app.route("/models", methods=["GET"])
+def get_models():
+    """Fetch available models from the Ollama API."""
+    try:
+        response = requests.get("http://ollama:11434/api/tags")
+        if response.status_code == 200:
+            models = response.json().get("models", [])
+            return jsonify({"models": models})
+        else:
+            return jsonify({"error": "Failed to fetch models"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# @app.route("/chat-with-model", methods=["POST"])
+# def chat_with_model():
+#     """Handle chat requests using the selected model."""
+#     data = request.json
+#     user_prompt = data.get("text", "")
+#     selected_model = data.get("model", MODEL_NAME)  # Default to deepseek-r1:7b
+
+#     try:
+#         api_response = requests.post(
+#             "http://ollama:11434/api/chat",
+#             json={
+#                 "model": selected_model,
+#                 "messages": [{"role": "user", "content": user_prompt}],
+#                 "stream": False,
+#             },
+#             headers={"Content-Type": "application/json"}
+#         )
+
+#         if api_response.status_code != 200:
+#             return jsonify({"error": f"HTTP error! Status: {api_response.status_code}"}), 500
+
+#         api_data = api_response.json()
+#         response_text = api_data.get("message", {}).get("content", "")
+#         return jsonify({"text": response_text})
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -121,11 +161,12 @@ def chat():
     user_prompt = data.get('text', '')
     response_text = ""
 
+    print('SELECTED MODEL: ', MODEL_NAME )
     try:
         api_response = requests.post(
-            'http://localhost:11434/api/chat',
+            'http://ollama:11434/api/chat',
             json={
-                'model': 'deepseek-r1:7b',
+                'model': MODEL_NAME,
                 'messages': [{'role': 'user', 'content': user_prompt}],
                 'stream': False,
             },
@@ -149,4 +190,5 @@ def chat():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=7000, debug=True)
+
